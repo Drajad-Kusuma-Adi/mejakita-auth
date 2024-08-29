@@ -1,69 +1,87 @@
 <?php
+error_reporting(0);
 require_once "config.php";
 
+$output = array();
+$res_code = 200;
+
+// Start output buffering
+ob_start();
+
 try {
-    if (!$_SERVER['REQUEST_METHOD'] == "POST") {
+    // Check if the request method is POST
+    if ($_SERVER['REQUEST_METHOD'] != "POST") {
+        $res_code = 405;
         throw new Exception("Method not allowed");
     }
 
-    // VALIDASI EMAIL SESUAI FORMAT
-    $valid_email = "user@gmail.com";
-    $valid_pass = "12345503";
-
+    // Get the form data
     $email = $_POST["email"];
-    $pass = $_POST["password"];
+    $pwd = $_POST["pwd"];
 
-    $emailError = "";
-    $passError = "";
-    
+    // Throw error if any field is empty
+    if (!$email || !$pwd) {
+        $res_code = 422;
+        throw new Exception("All fields are required");
+    }
+
+    // Throw error if email or password is not a string
+    if (!is_string($email) || !is_string($pwd)) {
+        $res_code = 422;
+        throw new Exception("Email and password must be strings");
+    }
+
+    // Validate email address
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailError = "Invalid email format";
+        $res_code = 422;
+        throw new Exception("Invalid email format");
     }
 
-    if ($email == "" || $pass == "") {
-        // FIELD BELUM DIISI
+    // Instantiate the DB class
+    $db = new DB('sqlite.db');
 
-        if (empty($_POST["email"])) {
-            $emailError = "Email is required.";
-        }
-
-        if (empty($_POST["password"])) {
-            $passwordError = "Password is required.";
-        }
+    // Check if user exists
+    $user = $db->read('email', $email);
+    if (!$user) {
+        $res_code = 404;
+        throw new Exception("User not found");
     }
 
-    if (strlen($pass) >= 8) {
-        // FUNGSI 2
-        $passError = "Password must be at least 8 characters long.";
-    } else if (!preg_match('/[0-9]/', $pass)) {
-        $passError = "Password harus mengandung setidaknya satu angka.";
-    } else if (!preg_match('/[\W_]/', $pass)) {
-        $passError = "Password harus mengandung setidaknya satu karakter khusus.";
+    // Validate password
+    switch (true) {
+        case (strlen($pwd) < 8):
+            // Handle password length less than 8 characters
+            $res_code = 422;
+            throw new Exception("Password must be at least 8 characters long.");
+            break;
+        case (!preg_match('/[0-9]/', $pwd)):
+            // Handle password without a digit
+            $res_code = 422;
+            throw new Exception ("Password must contain at least one digit.");
+            break;
+        case (!preg_match('/[\W_]/', $pwd)):
+            // Handle password without a special character
+            $res_code = 422;
+            throw new Exception("Password must contain at least one special character.");
+            break;
     }
 
-    if (empty($passError) && empty($emailError)) {
-        // Instantiate the DB class
-        $db = new DB('sqlite.db');
+    // Update the user's token
+    $newUser = $db->update($user['id'], 'token', bin2hex(random_bytes(16)));
 
-        // Make sure email&pass exist
-        $user = $db->read('(email, pass)', "($email, $pass)");
-        if ($user) {
-            // Save user data
-            $db->update($user['id'], 'token', bin2hex(random_bytes(16)));
-        } else {
-            throw new Exception("Email/Pass not correct");
-        }
-
-        // Redirect to the main page
-        header("Location: ../fe/main.html");
-    }
-
+    // Return the user data
+    echo json_encode($newUser);
+    http_response_code($res_code);
 } catch (Throwable $e) {
-    echo("<script> alert(" . $e->getMessage() . ") </script>");
-    header("Location: ../fe/login.html");
+    $output = array('error' => $e->getMessage());
+} finally {
+    // Set the content type to JSON
+    header('Content-Type: application/json');
+
+    // Output the JSON data
+    http_response_code($res_code);
+    echo json_encode($output);
+
+    // Flush the output buffer
+    ob_end_flush();
 }
-// 1. VALIDASI EMAIL DIISI SESUAI FORMAT -> type="email" (input) --DONE
-// 2. PASWORD WAJIB DIISI DENGAN SYARAT MINIMAL 8 KARAKTER, angka, karakter khusus -> minlength="8" (input) 
-// 3. TAMPILAN KESALAHAN JIKA INPUT TIDAK VALID EMAIL DAN PASSWORD-> /login?err=validfield --DONE
-// 4. TAMPILAN KESALAHAN JIKA FIELD BELUM DIISI (EMAIL DAN PASSWOORD)-> required (input) --DONE
-// 5. CHECKBOX INGAT SAYA

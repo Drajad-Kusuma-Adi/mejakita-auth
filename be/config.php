@@ -28,7 +28,7 @@ class DB {
       $this->secret = getenv('APP_SECRET');
     } catch (Throwable $e) {
       // Handle any errors that occur during the connection process
-      header('Location: ../fe/login.html');
+      throw $e;
     }
   }
 
@@ -51,7 +51,23 @@ class DB {
       // Return the user data
       return $this->read('id', $id);
     } catch (Throwable $e) {
-      header('Location: ../fe/login.html');
+      throw $e;
+    }
+  }
+
+  /**
+   * Index all users in the database
+   */
+  public function index() {
+    try {
+      // Read all users from the database
+      $stmt = $this->conn->prepare('SELECT * FROM users');
+      $stmt->execute();
+
+      // Return the user data
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+      throw $e;
     }
   }
 
@@ -65,12 +81,17 @@ class DB {
     try {
       // Read a user data from the database according to column and value
       $stmt = $this->conn->prepare('SELECT * FROM users WHERE '.$col.' = :val LIMIT 1');
-      $stmt->execute(array(':val' => $val));
+      $result = $stmt->execute(array(':val' => $val));
+
+      // Throw an error if no user is found
+      if (!$result) {
+        throw new Exception('User not found');
+      }
 
       // Return the user data
       return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (Throwable $e) {
-      header('Location: ../fe/login.html');
+      throw $e;
     }
   }
 
@@ -91,7 +112,7 @@ class DB {
       // Return the updated user data
       return $this->read('id', $id);
     } catch (Throwable $e) {
-      header('Location: ../fe/login.html');
+      throw $e;
     }
   }
 
@@ -108,7 +129,7 @@ class DB {
 
       return true;
     } catch (Throwable $e) {
-      header('Location: ../fe/login.html');
+      throw $e;
       return false;
     }
   }
