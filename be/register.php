@@ -70,7 +70,7 @@ try {
   $user = $db->create($name, $email, $pwd);
 
   // Return the user data
-  $output = array('user' => $user);
+  $output = $user;
   $res_code = 201;
 } catch (Throwable $e) {
   $output = array('error' => $e->getMessage());
