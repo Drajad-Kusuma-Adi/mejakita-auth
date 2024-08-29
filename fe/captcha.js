@@ -1,4 +1,4 @@
-const token = tokenGen();
+let token = tokenGen();
 drawCaptcha();
 
 /**
@@ -68,6 +68,10 @@ function handleCaptcha() {
   const input = document.getElementById("captcha-input").value;
   if (input !== token) {
     document.getElementById("msg").innerHTML = "Incorrect captcha";
+
+    // Re-generate the token
+    token = tokenGen();
+    drawCaptcha();
   } else {
     document.getElementById("msg").innerHTML = "Correct captcha";
   }
