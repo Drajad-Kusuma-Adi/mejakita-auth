@@ -1,0 +1,156 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	overflow: hidden;
+	font-family: 'Poppins', sans-serif;
+    --main-hue: 208;
+    --main-color: #ECC283;
+    --main-color-hover: #f8cc8a;
+    --text-color: #000;
+    --text-light-color: #9ca7b6;
+    --input-bg: hsla(var(--main-hue), 50%, 50%, 6.5%);
+    --input-bg-hover: hsla(var(--main-hue), 50%, 50%, 14%);
+    --input-text: #8c9aaf;
+}
+
+.container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 2rem;
+}
+
+.img {
+	/* position: fixed;
+	top: 0;
+	left: 0; */
+	/* display: flex;
+	justify-content: flex-end;
+	align-items: left; */
+	/* width: 100%;
+	height: 100vh; */
+	background-image: url('../img/reset_pass.svg');
+	height: 100vh;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.content {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: left;
+}
+
+form {
+	width: 360px;
+}
+
+.content img {
+	height: 100px;
+	width: 100px;
+}
+
+.content h2 {
+	margin: 15px 0;
+	color: #333;
+	font-size: 30px;
+    font-weight: 400px;
+    line-height: 20px;
+    text-align: left;
+	margin-bottom: 40px;
+}
+
+.input-wrap-confirm{
+	margin-top: 30px;
+}
+
+.input-wrap label {
+    margin-bottom: 2px;
+    position: absolute;
+    color: var(--text-color);
+	font-weight: 200 !important;
+}
+
+.main-input {
+    width: 100%;
+    border: 1px solid black;
+	padding: 10px 20px;
+	border-radius: 5px;
+    border-color: var(--text-light-color);
+    outline: none;
+    color: var(--text-color);
+    font-weight: 200px;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+
+
+a {
+	display: block;
+	text-align: right;
+	text-decoration: none;
+	color: #999;
+	font-size: 0.9rem;
+	transition: .3s;
+}
+
+
+ul a {
+	margin-top: 20px;
+	display: contents;
+	text-align: right;
+	text-decoration: none;
+	color: #999;
+	font-size: 0.9rem;
+}
+
+
+.btn {
+	display: block;
+	width: 30%;
+	height: 50px;
+	border-radius: 31.5px;
+	outline: none;
+	border: none;
+	background-color: var(--main-color);
+	background-size: 200%;
+	font-size: 1.2rem;
+	color: #fff;
+	font-family: 'Poppins', sans-serif;
+	text-transform: uppercase;
+	margin: 1rem 0;
+	cursor: pointer;
+	transition: .5s;
+}
+
+.btn:hover {
+	background-position: right;
+}
+
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+		align-items: center;
+    }
+
+	.input-group {
+		flex-direction: column;
+	}
+
+	.main-heading h1 {
+        text-wrap: wrap;
+        line-height: 3.5rem;
+	}
+
+    .img{
+        display:none;
+    }
+}
