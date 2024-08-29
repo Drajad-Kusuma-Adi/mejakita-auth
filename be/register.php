@@ -42,7 +42,7 @@ try {
   $db = new DB('sqlite.db');
 
   // Make sure email is unique
-  if ($db->read($email)) {
+  if ($db->read('email', $email)) {
     throw new Exception("Email already exists");
   }
 
