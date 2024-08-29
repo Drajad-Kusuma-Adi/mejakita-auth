@@ -49,7 +49,7 @@ class DB {
       $stmt->execute(array('id' => $id, ':name' => $name, ':email' => $email, ':pwd' => $this->enc($pwd, $this->secret), ':token' => null));
 
       // Return the user data
-      return $this->read($id);
+      return $this->read('id', $id);
     } catch (Throwable $e) {
       header('Location: ../fe/login.html');
     }
@@ -57,14 +57,15 @@ class DB {
 
   /**
    * Read a user from the database
-   * @param string $id user id
+   * @param string $col column to read
+   * @param string $val value to read
    * @return array user data
    */
-  public function read(string $id) {
+  public function read(string $col, string $val) {
     try {
-      // Read a user data from the database according to ID
-      $stmt = $this->conn->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
-      $stmt->execute(array(':id' => $id));
+      // Read a user data from the database according to column and value
+      $stmt = $this->conn->prepare('SELECT * FROM users WHERE '.$col.' = :val LIMIT 1');
+      $stmt->execute(array(':val' => $val));
 
       // Return the user data
       return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -88,7 +89,7 @@ class DB {
       $stmt->execute(array(':val' => $val, ':id' => $id));
 
       // Return the updated user data
-      return $this->read($id);
+      return $this->read('id', $id);
     } catch (Throwable $e) {
       header('Location: ../fe/login.html');
     }
