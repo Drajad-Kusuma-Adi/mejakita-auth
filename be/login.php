@@ -70,8 +70,7 @@ try {
     $newUser = $db->update($user['id'], 'token', bin2hex(random_bytes(16)));
 
     // Return the user data
-    echo json_encode($newUser);
-    http_response_code($res_code);
+    $output = $newUser;
 } catch (Throwable $e) {
     $output = array('error' => $e->getMessage());
 } finally {
