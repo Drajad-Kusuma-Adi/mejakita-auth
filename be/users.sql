@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT(36) NOT NULL,
+  name TEXT(255) NOT NULL,
+  email TEXT(255) NOT NULL,
+  pwd TEXT(255) NOT NULL,
+  token TEXT(255),
+  CONSTRAINT users_pk PRIMARY KEY (id)
+);
