@@ -66,6 +66,12 @@ try {
             break;
     }
 
+    // Check if the password is correct
+    if (!password_verify($pwd, $user['pwd'])) {
+        $res_code = 401;
+        throw new Exception("Incorrect password");
+    }
+
     // Update the user's token
     $newUser = $db->update($user['id'], 'token', bin2hex(random_bytes(16)));
 
