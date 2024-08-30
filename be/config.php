@@ -8,6 +8,7 @@ class DB {
    * Encrypt a value using the app secret
    * @param string $val value to encrypt
    * @return string encrypted value
+   * @deprecated use PHP built-in password_hash() instead
    */
   private function enc(string $val) {
     return hash_hmac('sha256', $val, $this->secret);
@@ -46,7 +47,8 @@ class DB {
 
       // Create a new user in the database
       $stmt = $this->conn->prepare('INSERT INTO users (id, name, email, pwd, token) VALUES (:id, :name, :email, :pwd, :token)');
-      $stmt->execute(array('id' => $id, ':name' => $name, ':email' => $email, ':pwd' => $this->enc($pwd, $this->secret), ':token' => null));
+      // $stmt->execute(array('id' => $id, ':name' => $name, ':email' => $email, ':pwd' => $this->enc($pwd, $this->secret), ':token' => null));
+      $stmt->execute(array('id' => $id, ':name' => $name, ':email' => $email, ':pwd' => password_hash($pwd, PASSWORD_DEFAULT), ':token' => null));
 
       // Return the user data
       return $this->read('id', $id);
@@ -105,6 +107,12 @@ class DB {
    */
   public function update(string $id, string $col, string $val) {
     try {
+      // Encrypt value if $col is 'pwd'
+      if ($col === 'pwd') {
+        // $val = $this->enc($val);
+        $val = password_hash($val, PASSWORD_DEFAULT);
+      }
+
       // Update the user's detail in the database
       $stmt = $this->conn->prepare("UPDATE users SET $col = :val WHERE id = :id");
       $stmt->execute(array(':val' => $val, ':id' => $id));
