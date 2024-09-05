@@ -69,6 +69,9 @@ try {
   // Create a new user
   $user = $db->create($name, $email, $pwd);
 
+  // Remove password from response body
+  $user["pwd"] = null;
+
   // Return the user data
   $output = $user;
   $res_code = 201;

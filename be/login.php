@@ -75,6 +75,9 @@ try {
     // Update the user's token
     $newUser = $db->update($user['id'], 'token', bin2hex(random_bytes(16)));
 
+    // Remove password from response body
+    $newUser["pwd"] = null;
+
     // Return the user data
     $output = $newUser;
 } catch (Throwable $e) {
